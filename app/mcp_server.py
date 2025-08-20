@@ -1,15 +1,17 @@
 import asyncio
 from mcp.server import Server
 from mcp.types import Tool, TextContent
-
+import json
 from tools.image_captioning import ImageCaptioningTool
 from tools.story_generation import StoryGenerationTool
+from tools.story_analysis import StoryAnalysisTool
 
 class MemoirAIServer:
     def __init__(self):
         self.server = Server("memoirai-storyteller")
         self.image_captioner = ImageCaptioningTool()
         self.story_generator = StoryGenerationTool()
+        self.story_analysis = StoryAnalysisTool()
 
         self._register_handlers()
 
@@ -48,6 +50,30 @@ class MemoirAIServer:
                     },
                     "required": ["captions"]
                 }
+            ),
+
+            Tool(
+                name="analyze_story_sentiment",
+                description="Analyze the emotional tone, themes, and mood of a journal entry",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "story_content": {"type": "string", "description": "The journal entry text to analyze"}
+                    },
+                    "required": ["story_content"]
+                }
+            ),
+            Tool(
+                name="generate_story_title",
+                description="Create compelling, personalized titles for journal entries",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "story_content": {"type": "string", "description": "The journal entry content"},
+                        "sentiment_data": {"type": "object", "description": "Optional sentiment analysis data for context"}
+                    },
+                    "required": ["story_content"]
+                }
             )
         ]
     
@@ -68,6 +94,20 @@ class MemoirAIServer:
                 arguments.get("tone", "heartwarming")
             )
             return TextContent(type="text", text=result)
+        
+        elif name == "analyze_story_sentiment":
+            result = await self.story_analysis.analyze_story_sentiment(
+                arguments["story_content"],
+            )
+            return TextContent(type="text", text=json.dumps(result, indent=2))
+        
+        elif name == "generate_story_title":
+            result = await self.story_analysis.generate_story_title(
+                arguments["story_content"],
+                arguments.get("sentiment_data", {}),
+            )
+            return TextContent(type="text", text=result)
+        
         else:
             raise ValueError(f"Unknown tool: {name}")
         
