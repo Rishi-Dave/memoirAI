@@ -86,13 +86,20 @@ class DatabaseService:
     # ==================================================================================
     
     def save_journal_entry(self, user_id: str, title: str, story_content: str, 
-                          user_context: str = "", tone: str = "heartwarming",
-                          images: List[Dict] = None, sentiment_analysis: Dict = None) -> str:
-        """Save a complete journal entry"""
+                      user_context: str = "", tone: str = "heartwarming",
+                      images: List[Dict] = None, sentiment_analysis: Dict = None) -> str:
+        """Save a complete journal entry with URL-friendly ID"""
         try:
             timestamp = datetime.utcnow().isoformat() + 'Z'
             entry_uuid = str(uuid.uuid4())[:8]
-            entry_id = f"ENTRY#{timestamp}#{entry_uuid}"
+            
+            # NEW: URL-friendly entry ID format
+            # Instead of: ENTRY#2025-08-20T23:24:55.123456Z#abc12345
+            # Use: ENTRY_2025-08-20T23-24-55-123456Z_abc12345
+            timestamp_clean = timestamp.replace(':', '-').replace('.', '-')
+            entry_id = f"ENTRY_{timestamp_clean}_{entry_uuid}"
+            
+            logger.info(f"Creating entry with URL-friendly ID: {entry_id}")
             
             # Calculate word count
             word_count = len(story_content.split())
@@ -129,10 +136,11 @@ class DatabaseService:
             
             logger.info(f"Saved journal entry: {entry_id} for user: {user_id}")
             return entry_id
-            
+
         except ClientError as e:
             logger.error(f"Error saving journal entry: {e}")
             raise
+
     
     def get_user_entries(self, user_id: str, limit: int = 20, newest_first: bool = True) -> List[Dict]:
         """Get user's journal entries (newest first by default)"""
@@ -149,15 +157,29 @@ class DatabaseService:
             return []
     
     def get_entry_by_id(self, user_id: str, entry_id: str) -> Optional[Dict]:
-        """Get specific journal entry"""
+        """Get specific journal entry with better error handling"""
         try:
+            logger.info(f"Getting entry {entry_id} for user {user_id}")
+            
             response = self.journal_table.get_item(
                 Key={'user_id': user_id, 'entry_id': entry_id}
             )
-            return response.get('Item')
+            
+            entry = response.get('Item')
+            if entry:
+                logger.info(f"Found entry {entry_id}")
+                return entry
+            else:
+                logger.warning(f"Entry {entry_id} not found for user {user_id}")
+                return None
+                
         except ClientError as e:
             logger.error(f"Error getting entry {entry_id}: {e}")
             return None
+        except Exception as e:
+            logger.error(f"Unexpected error getting entry {entry_id}: {e}")
+            return None
+
     
     def get_entries_by_date_range(self, user_id: str, start_date: str, end_date: str) -> List[Dict]:
         """Get entries within a date range using DateIndex"""
@@ -176,53 +198,188 @@ class DatabaseService:
             logger.error(f"Error getting entries by date range: {e}")
             return []
     
-    def get_entries_by_mood(self, user_id: str, mood: str) -> List[Dict]:
-        """Get entries by mood using MoodIndex"""
+    def get_favorite_entries(self, user_id: str, limit: int = 20, newest_first: bool = True) -> List[Dict]:
+        """
+        Get user's favorite journal entries only
+        Uses a filter expression to get only entries where is_favorite = true
+        """
         try:
+            logger.info(f"Getting favorite entries for user {user_id}, limit: {limit}")
+            
+            # Query all entries for the user, then filter for favorites
             response = self.journal_table.query(
-                IndexName='MoodIndex',
-                KeyConditionExpression='user_id = :user_id AND primary_mood = :mood',
+                KeyConditionExpression='user_id = :user_id',
+                FilterExpression='is_favorite = :is_favorite',
                 ExpressionAttributeValues={
                     ':user_id': user_id,
-                    ':mood': mood
-                }
+                    ':is_favorite': True
+                },
+                ScanIndexForward=not newest_first,  # False = descending (newest first)
+                Limit=limit * 2  # Get more since we're filtering, then limit later
             )
-            return response.get('Items', [])
+            
+            entries = response.get('Items', [])
+            
+            # Sort by created_at if needed (since FilterExpression can affect order)
+            if newest_first:
+                entries.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+            else:
+                entries.sort(key=lambda x: x.get('created_at', ''))
+            
+            # Apply final limit
+            favorite_entries = entries[:limit]
+            
+            logger.info(f"Found {len(favorite_entries)} favorite entries for user {user_id}")
+            return favorite_entries
+            
+        except ClientError as e:
+            logger.error(f"Error getting favorite entries for user {user_id}: {e}")
+            return []
+        except Exception as e:
+            logger.error(f"Unexpected error getting favorite entries: {e}")
+            return []
+
+    def get_entries_by_mood(self, user_id: str, mood: str, limit: int = 20) -> List[Dict]:
+        """
+        Get entries filtered by specific mood
+        Bonus function - might be useful for iOS app too!
+        """
+        try:
+            logger.info(f"Getting entries with mood '{mood}' for user {user_id}")
+            
+            # Use the existing MoodIndex if it exists, otherwise filter
+            try:
+                # Try using the MoodIndex first (more efficient)
+                response = self.journal_table.query(
+                    IndexName='MoodIndex',
+                    KeyConditionExpression='user_id = :user_id AND primary_mood = :mood',
+                    ExpressionAttributeValues={
+                        ':user_id': user_id,
+                        ':mood': mood
+                    },
+                    Limit=limit,
+                    ScanIndexForward=False  # Newest first
+                )
+                entries = response.get('Items', [])
+                
+            except ClientError:
+                # Fallback: Query all entries and filter by mood
+                logger.info("MoodIndex not available, using filter expression")
+                response = self.journal_table.query(
+                    KeyConditionExpression='user_id = :user_id',
+                    FilterExpression='primary_mood = :mood',
+                    ExpressionAttributeValues={
+                        ':user_id': user_id,
+                        ':mood': mood
+                    },
+                    Limit=limit * 2,
+                    ScanIndexForward=False
+                )
+                entries = response.get('Items', [])[:limit]
+            
+            logger.info(f"Found {len(entries)} entries with mood '{mood}' for user {user_id}")
+            return entries
+            
         except ClientError as e:
             logger.error(f"Error getting entries by mood {mood}: {e}")
             return []
+        except Exception as e:
+            logger.error(f"Unexpected error getting entries by mood: {e}")
+            return []
+
     
-    def update_entry_favorite(self, user_id: str, entry_id: str, is_favorite: bool):
-        """Mark/unmark entry as favorite"""
+    def update_entry_favorite(self, user_id: str, entry_id: str, is_favorite: bool) -> bool:
+        """
+        Mark/unmark entry as favorite with proper validation
+        Returns True if updated, False if entry not found
+        """
         try:
+            logger.info(f"Updating favorite status for entry {entry_id} to {is_favorite}")
+            
+            # First check if entry exists
+            existing_entry = self.get_entry_by_id(user_id, entry_id)
+            if not existing_entry:
+                logger.warning(f"Cannot update favorite - entry {entry_id} not found for user {user_id}")
+                return False
+            
+            # Update the favorite status
             self.journal_table.update_item(
                 Key={'user_id': user_id, 'entry_id': entry_id},
                 UpdateExpression='SET is_favorite = :fav, updated_at = :timestamp',
                 ExpressionAttributeValues={
                     ':fav': is_favorite,
                     ':timestamp': datetime.utcnow().isoformat() + 'Z'
-                }
+                },
+                # Ensure entry still exists when we update
+                ConditionExpression='attribute_exists(entry_id)'
             )
+            
+            logger.info(f"Successfully updated favorite status for entry {entry_id}")
+            return True
+            
         except ClientError as e:
-            logger.error(f"Error updating favorite status: {e}")
+            if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+                logger.warning(f"Entry {entry_id} no longer exists")
+                return False
+            else:
+                logger.error(f"Error updating favorite status: {e}")
+                raise
+        except Exception as e:
+            logger.error(f"Unexpected error updating favorite status: {e}")
+            raise
+
     
-    def delete_entry(self, user_id: str, entry_id: str):
-        """Delete a journal entry"""
+    def delete_entry(self, user_id: str, entry_id: str) -> bool:
+        """
+        Delete a journal entry with proper validation
+        Returns True if deleted, False if not found
+        """
         try:
+            logger.info(f"Attempting to delete entry {entry_id} for user {user_id}")
+            
+            # First, check if the entry exists
+            existing_entry = self.get_entry_by_id(user_id, entry_id)
+            if not existing_entry:
+                logger.warning(f"Cannot delete - entry {entry_id} not found for user {user_id}")
+                return False
+            
+            # Entry exists, now delete it
             self.journal_table.delete_item(
-                Key={'user_id': user_id, 'entry_id': entry_id}
+                Key={'user_id': user_id, 'entry_id': entry_id},
+                # Add condition to ensure we only delete if it still exists
+                ConditionExpression='attribute_exists(entry_id)'
             )
             
-            # Decrease user's total entry count
-            self.users_table.update_item(
-                Key={'user_id': user_id},
-                UpdateExpression='ADD total_entries :dec',
-                ExpressionAttributeValues={':dec': -1}
-            )
+            logger.info(f"Successfully deleted entry {entry_id} from journal table")
             
-            logger.info(f"Deleted entry {entry_id} for user {user_id}")
+            # Only decrement counter if deletion was successful
+            try:
+                self.users_table.update_item(
+                    Key={'user_id': user_id},
+                    UpdateExpression='ADD total_entries :dec',
+                    ConditionExpression='total_entries > :zero',
+                    ExpressionAttributeValues={
+                        ':dec': -1,
+                        ':zero': 0
+                    }
+                )
+                logger.info(f"Decremented entry count for user {user_id}")
+            except ClientError as count_error:
+                # If count update fails, log but don't fail the whole operation
+                logger.warning(f"Could not update entry count for user {user_id}: {count_error}")
+            
+            logger.info(f"Successfully deleted entry {entry_id} for user {user_id}")
+            return True
+            
         except ClientError as e:
-            logger.error(f"Error deleting entry {entry_id}: {e}")
+            if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+                logger.warning(f"Entry {entry_id} was already deleted or doesn't exist")
+                return False
+            else:
+                logger.error(f"DynamoDB error deleting entry {entry_id}: {e}")
+                raise
+        except Exception as e:
+            logger.error(f"Unexpected error deleting entry {entry_id}: {e}")
             raise
     
     # ==================================================================================

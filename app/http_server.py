@@ -154,9 +154,11 @@ def create_memoir_entry():
         
         # Validate required fields
         if not data or 'user_id' not in data:
+            logger.error("Missing user_id in request")
             return jsonify({'error': 'user_id is required'}), 400
         
         if 'images' not in data or not data['images']:
+            logger.error("Missing images in request")
             return jsonify({'error': 'At least one image is required'}), 400
         
         user_id = data['user_id']
@@ -164,57 +166,139 @@ def create_memoir_entry():
         user_context = data.get('user_context', '')
         tone = data.get('tone', 'heartwarming')
         
+        logger.info(f"Creating memoir for user {user_id} with {len(images)} images")
+        
         # Step 1: Caption all images
         logger.info(f"Captioning {len(images)} images...")
         captions = []
         image_metadata = []
         
         for i, img in enumerate(images):
-            caption = run_async(
-                image_captioner.caption_image(
-                    img['image_data'],
-                    img.get('image_format', 'jpeg')
+            try:
+                logger.info(f"Processing image {i+1}/{len(images)}")
+                
+                # Validate image data
+                if 'image_data' not in img or not img['image_data']:
+                    logger.error(f"Image {i+1} missing image_data")
+                    return jsonify({'error': f'Image {i+1} missing image_data'}), 400
+                
+                # Caption the image
+                caption = run_async(
+                    image_captioner.caption_image(
+                        img['image_data'],
+                        img.get('image_format', 'jpeg')
+                    )
                 )
-            )
-            captions.append(caption)
-            
-            # Store image metadata (in real app, you'd upload to S3)
-            image_metadata.append({
-                'image_id': f'img_{i+1}',
-                'caption': caption,
-                'upload_order': i + 1,
-                'image_url': f'placeholder://image_{i+1}.jpg'  # Replace with S3 URL
-            })
+                
+                # Check if captioning was successful
+                if not caption or caption.startswith('Error:'):
+                    logger.error(f"Failed to caption image {i+1}: {caption}")
+                    return jsonify({'error': f'Failed to caption image {i+1}: {caption}'}), 500
+                
+                captions.append(caption)
+                logger.info(f"Successfully captioned image {i+1}")
+                
+                # Store image metadata
+                image_metadata.append({
+                    'image_id': f'img_{i+1}',
+                    'caption': caption,
+                    'upload_order': i + 1,
+                    'image_url': f'placeholder://image_{i+1}.jpg'  # Replace with S3 URL
+                })
+                
+            except Exception as img_error:
+                logger.error(f"Error processing image {i+1}: {str(img_error)}")
+                return jsonify({'error': f'Error processing image {i+1}: {str(img_error)}'}), 500
+        
+        # Validate we have captions
+        if not captions:
+            logger.error("No captions were generated")
+            return jsonify({'error': 'Failed to generate any image captions'}), 500
+        
+        logger.info(f"Generated {len(captions)} captions successfully")
         
         # Step 2: Generate story from captions
         logger.info("Generating story from captions...")
-        story_content = run_async(
-            story_generator.generate_story(captions, user_context, tone)
-        )
+        try:
+            story_content = run_async(
+                story_generator.generate_story(captions, user_context, tone)
+            )
+            
+            # Check if story generation was successful
+            if not story_content or story_content.startswith('Error:'):
+                logger.error(f"Failed to generate story: {story_content}")
+                return jsonify({'error': f'Failed to generate story: {story_content}'}), 500
+            
+            logger.info("Story generated successfully")
+            
+        except Exception as story_error:
+            logger.error(f"Error generating story: {str(story_error)}")
+            return jsonify({'error': f'Error generating story: {str(story_error)}'}), 500
         
         # Step 3: Analyze sentiment
         logger.info("Analyzing story sentiment...")
-        sentiment_analysis = run_async(
-            story_analyzer.analyze_story_sentiment(story_content)
-        )
+        try:
+            sentiment_analysis = run_async(
+                story_analyzer.analyze_story_sentiment(story_content)
+            )
+            
+            # Check for errors in sentiment analysis
+            if isinstance(sentiment_analysis, dict) and 'error' in sentiment_analysis:
+                logger.warning(f"Sentiment analysis failed: {sentiment_analysis['error']}")
+                # Use default sentiment if analysis fails
+                sentiment_analysis = {
+                    'primary_mood': 'neutral',
+                    'emotional_intensity': 5,
+                    'overall_sentiment': 'neutral'
+                }
+            
+            logger.info("Sentiment analysis completed")
+            
+        except Exception as sentiment_error:
+            logger.error(f"Error in sentiment analysis: {str(sentiment_error)}")
+            # Use default sentiment
+            sentiment_analysis = {
+                'primary_mood': 'neutral',
+                'emotional_intensity': 5,
+                'overall_sentiment': 'neutral'
+            }
         
         # Step 4: Generate title
         logger.info("Generating story title...")
-        title = run_async(
-            story_analyzer.generate_story_title(story_content, sentiment_analysis)
-        )
+        try:
+            title = run_async(
+                story_analyzer.generate_story_title(story_content, sentiment_analysis)
+            )
+            
+            # Check if title generation was successful
+            if not title or (isinstance(title, dict) and 'error' in title):
+                logger.warning(f"Title generation failed, using default")
+                title = f"My {tone.capitalize()} Memory"
+            
+            logger.info("Title generated successfully")
+            
+        except Exception as title_error:
+            logger.error(f"Error generating title: {str(title_error)}")
+            title = f"My {tone.capitalize()} Memory"
         
         # Step 5: Save to database
         logger.info("Saving entry to database...")
-        entry_id = db_service.save_journal_entry(
-            user_id=user_id,
-            title=title,
-            story_content=story_content,
-            user_context=user_context,
-            tone=tone,
-            images=image_metadata,
-            sentiment_analysis=sentiment_analysis
-        )
+        try:
+            entry_id = db_service.save_journal_entry(
+                user_id=user_id,
+                title=title,
+                story_content=story_content,
+                user_context=user_context,
+                tone=tone,
+                images=image_metadata,
+                sentiment_analysis=sentiment_analysis
+            )
+            
+            logger.info(f"Entry saved successfully with ID: {entry_id}")
+            
+        except Exception as db_error:
+            logger.error(f"Error saving to database: {str(db_error)}")
+            return jsonify({'error': f'Error saving to database: {str(db_error)}'}), 500
         
         # Prepare response
         response = {
@@ -227,7 +311,7 @@ def create_memoir_entry():
             'metadata': {
                 'word_count': len(story_content.split()),
                 'tone': tone,
-                'created_at': entry_id.split('#')[1]  # Extract timestamp from entry_id
+                'created_at': entry_id.split('_')[1] if '_' in entry_id else 'unknown'
             }
         }
         
@@ -235,8 +319,10 @@ def create_memoir_entry():
         return jsonify(response)
         
     except Exception as e:
-        logger.error(f"Error creating memoir entry: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"Unexpected error creating memoir entry: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
 # ==================================================================================
 # USER MANAGEMENT ENDPOINTS
@@ -312,20 +398,23 @@ def get_user_entries(user_id):
 
 @app.route('/users/<user_id>/entries/<entry_id>', methods=['GET'])
 def get_entry_by_id(user_id, entry_id):
-    """Get specific journal entry"""
+    """Get specific journal entry with better error handling"""
     try:
+        logger.info(f"Getting entry {entry_id} for user {user_id}")
+        
         entry = db_service.get_entry_by_id(user_id, entry_id)
         if not entry:
+            logger.warning(f"Entry {entry_id} not found for user {user_id}")
             return jsonify({'error': 'Entry not found'}), 404
         
+        logger.info(f"Successfully retrieved entry {entry_id}")
         return jsonify(entry)
         
     except Exception as e:
-        logger.error(f"Error getting entry: {str(e)}")
+        logger.error(f"Error getting entry {entry_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/users/<user_id>/entries/mood/<mood>', methods=['GET'])
-def get_entries_by_mood(user_id, mood):
+
     """Get entries by mood"""
     try:
         entries = db_service.get_entries_by_mood(user_id, mood)
@@ -335,29 +424,123 @@ def get_entries_by_mood(user_id, mood):
         logger.error(f"Error getting entries by mood: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/users/<user_id>/entries/favorites', methods=['GET'])
+def get_favorite_entries(user_id):
+    """Get user's favorite journal entries only"""
+    try:
+        limit = int(request.args.get('limit', 20))
+        newest_first = request.args.get('newest_first', 'true').lower() == 'true'
+        
+        logger.info(f"Getting favorite entries for user {user_id}, limit: {limit}")
+        
+        favorite_entries = db_service.get_favorite_entries(user_id, limit, newest_first)
+        
+        logger.info(f"Retrieved {len(favorite_entries)} favorite entries")
+        
+        return jsonify({
+            'entries': favorite_entries, 
+            'count': len(favorite_entries),
+            'user_id': user_id,
+            'filter': 'favorites'
+        })
+        
+    except ValueError:
+        return jsonify({'error': 'Invalid limit parameter'}), 400
+    except Exception as e:
+        logger.error(f"Error getting favorite entries: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/users/<user_id>/entries/mood/<mood>', methods=['GET'])
+def get_entries_by_mood(user_id, mood):
+    """Get entries filtered by specific mood"""
+    try:
+        limit = int(request.args.get('limit', 20))
+        
+        # Validate mood parameter
+        valid_moods = ['joyful', 'nostalgic', 'adventurous', 'peaceful', 'melancholic', 'excited', 'grateful', 'reflective', 'neutral']
+        if mood not in valid_moods:
+            return jsonify({
+                'error': 'Invalid mood', 
+                'valid_moods': valid_moods
+            }), 400
+        
+        logger.info(f"Getting entries with mood '{mood}' for user {user_id}")
+        
+        mood_entries = db_service.get_entries_by_mood(user_id, mood, limit)
+        
+        logger.info(f"Retrieved {len(mood_entries)} entries with mood '{mood}'")
+        
+        return jsonify({
+            'entries': mood_entries,
+            'count': len(mood_entries), 
+            'user_id': user_id,
+            'mood': mood,
+            'filter': f'mood:{mood}'
+        })
+        
+    except ValueError:
+        return jsonify({'error': 'Invalid limit parameter'}), 400
+    except Exception as e:
+        logger.error(f"Error getting entries by mood: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    
 @app.route('/users/<user_id>/entries/<entry_id>/favorite', methods=['PATCH'])
 def toggle_favorite(user_id, entry_id):
-    """Toggle entry favorite status"""
+    """Toggle entry favorite status with validation"""
     try:
         data = request.json
-        is_favorite = data.get('is_favorite', False)
+        if not data or 'is_favorite' not in data:
+            return jsonify({'error': 'is_favorite is required'}), 400
         
-        db_service.update_entry_favorite(user_id, entry_id, is_favorite)
-        return jsonify({'success': True, 'is_favorite': is_favorite})
+        is_favorite = data.get('is_favorite')
+        if not isinstance(is_favorite, bool):
+            return jsonify({'error': 'is_favorite must be true or false'}), 400
+        
+        logger.info(f"Toggling favorite for entry {entry_id} to {is_favorite}")
+        
+        # Attempt to update favorite status
+        was_updated = db_service.update_entry_favorite(user_id, entry_id, is_favorite)
+        
+        if was_updated:
+            logger.info(f"Successfully updated favorite status for entry {entry_id}")
+            return jsonify({
+                'success': True, 
+                'is_favorite': is_favorite,
+                'entry_id': entry_id,
+                'user_id': user_id,
+                'message': f'Entry {"added to" if is_favorite else "removed from"} favorites'
+            })
+        else:
+            logger.warning(f"Entry {entry_id} not found for favorite update")
+            return jsonify({'error': 'Entry not found'}), 404
         
     except Exception as e:
-        logger.error(f"Error toggling favorite: {str(e)}")
+        logger.error(f"Error toggling favorite for entry {entry_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/users/<user_id>/entries/<entry_id>', methods=['DELETE'])
 def delete_entry(user_id, entry_id):
-    """Delete journal entry"""
+    """Delete journal entry with proper validation"""
     try:
-        db_service.delete_entry(user_id, entry_id)
-        return jsonify({'success': True, 'message': 'Entry deleted successfully'})
+        logger.info(f"Deleting entry {entry_id} for user {user_id}")
+        
+        # Attempt to delete the entry
+        was_deleted = db_service.delete_entry(user_id, entry_id)
+        
+        if was_deleted:
+            logger.info(f"Successfully deleted entry {entry_id}")
+            return jsonify({
+                'success': True, 
+                'message': 'Entry deleted successfully',
+                'entry_id': entry_id,
+                'user_id': user_id
+            })
+        else:
+            logger.warning(f"Entry {entry_id} not found for deletion")
+            return jsonify({'error': 'Entry not found'}), 404
         
     except Exception as e:
-        logger.error(f"Error deleting entry: {str(e)}")
+        logger.error(f"Error deleting entry {entry_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # ==================================================================================
