@@ -4,6 +4,8 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import logging
 from botocore.exceptions import ClientError
+import bcrypt
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +83,86 @@ class DatabaseService:
         except ClientError as e:
             logger.error(f"Error updating last login for {user_id}: {e}")
     
+    def create_user_with_password(self, email: str, password: str, preferences: Dict = None) -> str:
+        """Create a new user with hashed password"""
+        try:
+            # Check if user already exists
+            existing_user = self.get_user_by_email(email)
+            if existing_user:
+                raise ValueError("User with this email already exists")
+            
+            user_id = f"user_{str(uuid.uuid4())[:8]}"
+            timestamp = datetime.utcnow().isoformat() + 'Z'
+            
+            # Hash the password
+            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            
+            user_item = {
+                'user_id': user_id,
+                'email': email,
+                'password_hash': password_hash,
+                'created_at': timestamp,
+                'last_login': timestamp,
+                'preferences': preferences or {
+                    'default_tone': 'heartwarming',
+                    'privacy_settings': 'private',
+                    'notification_enabled': True
+                },
+                'subscription_status': 'free',
+                'total_entries': 0,
+                'is_active': True
+            }
+            
+            self.users_table.put_item(Item=user_item)
+            logger.info(f"Created user with password: {user_id}")
+            return user_id
+            
+        except ClientError as e:
+            logger.error(f"Error creating user with password: {e}")
+            raise
+
+    def authenticate_user(self, email: str, password: str) -> Optional[Dict]:
+        """Authenticate user with email and password"""
+        try:
+            user = self.get_user_by_email(email)
+            if not user:
+                return None
+            
+            # Check if account is active
+            if not user.get('is_active', True):
+                return None
+            
+            # Verify password
+            stored_hash = user.get('password_hash', '')
+            if bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
+                # Update last login
+                self.update_user_last_login(user['user_id'])
+                return user
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error authenticating user: {e}")
+            return None
+
+    def update_user_password(self, user_id: str, new_password: str) -> bool:
+        """Update user password"""
+        try:
+            password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            
+            self.users_table.update_item(
+                Key={'user_id': user_id},
+                UpdateExpression='SET password_hash = :hash, updated_at = :timestamp',
+                ExpressionAttributeValues={
+                    ':hash': password_hash,
+                    ':timestamp': datetime.utcnow().isoformat() + 'Z'
+                }
+            )
+            return True
+        except ClientError as e:
+            logger.error(f"Error updating password: {e}")
+            return False
+
     # ==================================================================================
     # JOURNAL ENTRY OPERATIONS
     # ==================================================================================
@@ -410,6 +492,7 @@ class DatabaseService:
             return {}
     
     def get_user_stats(self, user_id: str) -> Dict:
+
         """Get comprehensive user statistics"""
         try:
             user = self.get_user(user_id)

@@ -1,0 +1,570 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		F1D80E662E56EEB900FA3A7B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F1D80E502E56EEB700FA3A7B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1D80E572E56EEB700FA3A7B;
+			remoteInfo = MemoirAI;
+		};
+		F1D80E702E56EEB900FA3A7B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F1D80E502E56EEB700FA3A7B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1D80E572E56EEB700FA3A7B;
+			remoteInfo = MemoirAI;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F1D80E582E56EEB700FA3A7B /* MemoirAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MemoirAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1D80E652E56EEB900FA3A7B /* MemoirAITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MemoirAITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1D80E6F2E56EEB900FA3A7B /* MemoirAIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MemoirAIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F1D80E8D2E56F00000FA3A7B /* Exceptions for "MemoirAI" folder in "MemoirAI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F1D80E572E56EEB700FA3A7B /* MemoirAI */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F1D80E5A2E56EEB700FA3A7B /* MemoirAI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F1D80E8D2E56F00000FA3A7B /* Exceptions for "MemoirAI" folder in "MemoirAI" target */,
+			);
+			path = MemoirAI;
+			sourceTree = "<group>";
+		};
+		F1D80E682E56EEB900FA3A7B /* MemoirAITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MemoirAITests;
+			sourceTree = "<group>";
+		};
+		F1D80E722E56EEB900FA3A7B /* MemoirAIUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MemoirAIUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F1D80E552E56EEB700FA3A7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D80E622E56EEB900FA3A7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D80E6C2E56EEB900FA3A7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F1D80E4F2E56EEB700FA3A7B = {
+			isa = PBXGroup;
+			children = (
+				F1D80E5A2E56EEB700FA3A7B /* MemoirAI */,
+				F1D80E682E56EEB900FA3A7B /* MemoirAITests */,
+				F1D80E722E56EEB900FA3A7B /* MemoirAIUITests */,
+				F1D80E592E56EEB700FA3A7B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F1D80E592E56EEB700FA3A7B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F1D80E582E56EEB700FA3A7B /* MemoirAI.app */,
+				F1D80E652E56EEB900FA3A7B /* MemoirAITests.xctest */,
+				F1D80E6F2E56EEB900FA3A7B /* MemoirAIUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F1D80E572E56EEB700FA3A7B /* MemoirAI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1D80E792E56EEB900FA3A7B /* Build configuration list for PBXNativeTarget "MemoirAI" */;
+			buildPhases = (
+				F1D80E542E56EEB700FA3A7B /* Sources */,
+				F1D80E552E56EEB700FA3A7B /* Frameworks */,
+				F1D80E562E56EEB700FA3A7B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F1D80E5A2E56EEB700FA3A7B /* MemoirAI */,
+			);
+			name = MemoirAI;
+			packageProductDependencies = (
+			);
+			productName = MemoirAI;
+			productReference = F1D80E582E56EEB700FA3A7B /* MemoirAI.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F1D80E642E56EEB900FA3A7B /* MemoirAITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1D80E7C2E56EEB900FA3A7B /* Build configuration list for PBXNativeTarget "MemoirAITests" */;
+			buildPhases = (
+				F1D80E612E56EEB900FA3A7B /* Sources */,
+				F1D80E622E56EEB900FA3A7B /* Frameworks */,
+				F1D80E632E56EEB900FA3A7B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F1D80E672E56EEB900FA3A7B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F1D80E682E56EEB900FA3A7B /* MemoirAITests */,
+			);
+			name = MemoirAITests;
+			packageProductDependencies = (
+			);
+			productName = MemoirAITests;
+			productReference = F1D80E652E56EEB900FA3A7B /* MemoirAITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F1D80E6E2E56EEB900FA3A7B /* MemoirAIUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1D80E7F2E56EEB900FA3A7B /* Build configuration list for PBXNativeTarget "MemoirAIUITests" */;
+			buildPhases = (
+				F1D80E6B2E56EEB900FA3A7B /* Sources */,
+				F1D80E6C2E56EEB900FA3A7B /* Frameworks */,
+				F1D80E6D2E56EEB900FA3A7B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F1D80E712E56EEB900FA3A7B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F1D80E722E56EEB900FA3A7B /* MemoirAIUITests */,
+			);
+			name = MemoirAIUITests;
+			packageProductDependencies = (
+			);
+			productName = MemoirAIUITests;
+			productReference = F1D80E6F2E56EEB900FA3A7B /* MemoirAIUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F1D80E502E56EEB700FA3A7B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					F1D80E572E56EEB700FA3A7B = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					F1D80E642E56EEB900FA3A7B = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = F1D80E572E56EEB700FA3A7B;
+					};
+					F1D80E6E2E56EEB900FA3A7B = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = F1D80E572E56EEB700FA3A7B;
+					};
+				};
+			};
+			buildConfigurationList = F1D80E532E56EEB700FA3A7B /* Build configuration list for PBXProject "MemoirAI" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F1D80E4F2E56EEB700FA3A7B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F1D80E592E56EEB700FA3A7B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F1D80E572E56EEB700FA3A7B /* MemoirAI */,
+				F1D80E642E56EEB900FA3A7B /* MemoirAITests */,
+				F1D80E6E2E56EEB900FA3A7B /* MemoirAIUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F1D80E562E56EEB700FA3A7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D80E632E56EEB900FA3A7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D80E6D2E56EEB900FA3A7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F1D80E542E56EEB700FA3A7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D80E612E56EEB900FA3A7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D80E6B2E56EEB900FA3A7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F1D80E672E56EEB900FA3A7B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1D80E572E56EEB700FA3A7B /* MemoirAI */;
+			targetProxy = F1D80E662E56EEB900FA3A7B /* PBXContainerItemProxy */;
+		};
+		F1D80E712E56EEB900FA3A7B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1D80E572E56EEB700FA3A7B /* MemoirAI */;
+			targetProxy = F1D80E702E56EEB900FA3A7B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F1D80E772E56EEB900FA3A7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F1D80E782E56EEB900FA3A7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F1D80E7A2E56EEB900FA3A7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MemoirAI/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dave.rishi.MemoirAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F1D80E7B2E56EEB900FA3A7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MemoirAI/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dave.rishi.MemoirAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F1D80E7D2E56EEB900FA3A7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dave.rishi.MemoirAITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MemoirAI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MemoirAI";
+			};
+			name = Debug;
+		};
+		F1D80E7E2E56EEB900FA3A7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dave.rishi.MemoirAITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MemoirAI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MemoirAI";
+			};
+			name = Release;
+		};
+		F1D80E802E56EEB900FA3A7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dave.rishi.MemoirAIUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MemoirAI;
+			};
+			name = Debug;
+		};
+		F1D80E812E56EEB900FA3A7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dave.rishi.MemoirAIUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MemoirAI;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F1D80E532E56EEB700FA3A7B /* Build configuration list for PBXProject "MemoirAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1D80E772E56EEB900FA3A7B /* Debug */,
+				F1D80E782E56EEB900FA3A7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1D80E792E56EEB900FA3A7B /* Build configuration list for PBXNativeTarget "MemoirAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1D80E7A2E56EEB900FA3A7B /* Debug */,
+				F1D80E7B2E56EEB900FA3A7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1D80E7C2E56EEB900FA3A7B /* Build configuration list for PBXNativeTarget "MemoirAITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1D80E7D2E56EEB900FA3A7B /* Debug */,
+				F1D80E7E2E56EEB900FA3A7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1D80E7F2E56EEB900FA3A7B /* Build configuration list for PBXNativeTarget "MemoirAIUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1D80E802E56EEB900FA3A7B /* Debug */,
+				F1D80E812E56EEB900FA3A7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F1D80E502E56EEB700FA3A7B /* Project object */;
+}

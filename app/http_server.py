@@ -6,6 +6,8 @@ from tools.image_captioning import ImageCaptioningTool
 from tools.story_generation import StoryGenerationTool
 from tools.story_analysis import StoryAnalysisTool
 from tools.database_service import DatabaseService
+import bcrypt
+import secrets
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -543,6 +545,120 @@ def delete_entry(user_id, entry_id):
         logger.error(f"Error deleting entry {entry_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/auth/register', methods=['POST'])
+def register_user():
+    """Register a new user with email and password"""
+    try:
+        data = request.json
+        logger.info("Processing user registration")
+        
+        if not data or 'email' not in data or 'password' not in data:
+            return jsonify({'error': 'email and password are required'}), 400
+        
+        email = data['email'].strip().lower()
+        password = data['password']
+        
+        # Basic validation
+        if len(password) < 6:
+            return jsonify({'error': 'Password must be at least 6 characters'}), 400
+        
+        if '@' not in email or '.' not in email:
+            return jsonify({'error': 'Please enter a valid email address'}), 400
+        
+        try:
+            user_id = db_service.create_user_with_password(
+                email=email,
+                password=password,
+                preferences=data.get('preferences', {})
+            )
+            
+            logger.info(f"User registered successfully: {user_id}")
+            return jsonify({
+                'success': True,
+                'user_id': user_id,
+                'email': email,
+                'message': 'Account created successfully'
+            })
+            
+        except ValueError as e:
+            logger.warning(f"Registration failed: {str(e)}")
+            return jsonify({'error': str(e)}), 409
+        
+    except Exception as e:
+        logger.error(f"Error in user registration: {str(e)}")
+        return jsonify({'error': 'Registration failed'}), 500
+
+@app.route('/auth/login', methods=['POST'])
+def login_user():
+    """Authenticate user with email and password"""
+    try:
+        data = request.json
+        logger.info("Processing user login")
+        
+        if not data or 'email' not in data or 'password' not in data:
+            return jsonify({'error': 'email and password are required'}), 400
+        
+        email = data['email'].strip().lower()
+        password = data['password']
+        
+        user = db_service.authenticate_user(email, password)
+        
+        if user:
+            logger.info(f"User authenticated successfully: {user['user_id']}")
+            
+            # Remove password hash from response
+            user_response = {k: v for k, v in user.items() if k != 'password_hash'}
+            
+            return jsonify({
+                'success': True,
+                'user': user_response,
+                'message': 'Login successful'
+            })
+        else:
+            logger.warning(f"Authentication failed for email: {email}")
+            return jsonify({'error': 'Invalid email or password'}), 401
+        
+    except Exception as e:
+        logger.error(f"Error in user login: {str(e)}")
+        return jsonify({'error': 'Login failed'}), 500
+
+@app.route('/auth/change-password', methods=['POST'])
+def change_password():
+    """Change user password"""
+    try:
+        data = request.json
+        
+        if not data or 'user_id' not in data or 'current_password' not in data or 'new_password' not in data:
+            return jsonify({'error': 'user_id, current_password, and new_password are required'}), 400
+        
+        user_id = data['user_id']
+        current_password = data['current_password']
+        new_password = data['new_password']
+        
+        if len(new_password) < 6:
+            return jsonify({'error': 'New password must be at least 6 characters'}), 400
+        
+        # Get user and verify current password
+        user = db_service.get_user(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Verify current password
+        stored_hash = user.get('password_hash', '')
+        if not bcrypt.checkpw(current_password.encode('utf-8'), stored_hash.encode('utf-8')):
+            return jsonify({'error': 'Current password is incorrect'}), 401
+        
+        # Update password
+        success = db_service.update_user_password(user_id, new_password)
+        
+        if success:
+            return jsonify({'success': True, 'message': 'Password updated successfully'})
+        else:
+            return jsonify({'error': 'Failed to update password'}), 500
+        
+    except Exception as e:
+        logger.error(f"Error changing password: {str(e)}")
+        return jsonify({'error': 'Password change failed'}), 500
 # ==================================================================================
 # ERROR HANDLERS
 # ==================================================================================

@@ -18,7 +18,9 @@ class ImageCaptioningTool:
                     "content": [
                         {
                             "type":"text",
-                            "text": "Describe this image in rich detail for journaling purposes. Focus on the emotions, setting, people, action, and memorable moments captured. Be descriptive and evocative."
+                            "text": """Describe this image in rich detail for journaling purposes. Focus on the emotions, setting, people, action, and memorable moments captured. Be descriptive and evocative.
+                                    IMPORTANT: Each caption should only be 1-2 concise sentences.
+                            """
                         },
                         {
                             "type": "image_url",
