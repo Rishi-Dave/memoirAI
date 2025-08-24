@@ -8,10 +8,9 @@ struct EntryCardView: View {
             // Header with title and favorite
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(entry.title)
+                    Text(entry.title.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
                         .font(.headline)
                         .lineLimit(2)
-                    
                     Text(formatDate(entry.createdAt))
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -64,4 +63,3 @@ struct EntryCardView: View {
         return dateString
     }
 }
-

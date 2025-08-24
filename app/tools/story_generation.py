@@ -18,7 +18,8 @@ class StoryGenerationTool():
             {captions_text}
             More context from the user: {user_context}
             Write a short, meaningful entry summarizes how the user's day went
-            
+            Return only the story itself, with paragraphs seperated by a newline.
+            IMPORTANT: do not add a title or a date field
             """
             messages = [
                 {

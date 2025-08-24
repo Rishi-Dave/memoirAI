@@ -6,16 +6,24 @@ struct EntryDetailView: View {
     @StateObject private var viewModel = EntryDetailViewModel()
     @State private var showDeleteAlert = false
     
+    let onEntryChanged: (() -> Void)?
+        
+        // Add initializer
+        init(entry: MemoirEntry, onEntryChanged: (() -> Void)? = nil) {
+            self._entry = State(initialValue: entry)
+            self.onEntryChanged = onEntryChanged
+        }
+
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // Title and metadata
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(entry.title)
+                        Text(entry.title.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                        
                         HStack {
                             Text(formatDate(entry.createdAt))
                                 .foregroundColor(.secondary)
@@ -46,36 +54,6 @@ struct EntryDetailView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
-                    // Images section
-                    if !entry.images.isEmpty {
-                        Divider()
-                        
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Images")
-                                .font(.headline)
-                            
-                            LazyVGrid(columns: [
-                                GridItem(.flexible()),
-                                GridItem(.flexible())
-                            ], spacing: 8) {
-                                ForEach(entry.images, id: \.imageId) { image in
-                                    AsyncImage(url: URL(string: image.imageUrl)) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                    } placeholder: {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.gray.opacity(0.3))
-                                            .aspectRatio(1, contentMode: .fit)
-                                    }
-                                    .frame(height: 120)
-                                    .clipped()
-                                    .cornerRadius(8)
-                                }
-                            }
-                        }
-                    }
                 }
                 .padding()
             }
@@ -84,6 +62,7 @@ struct EntryDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Close") {
+                        onEntryChanged?()
                         dismiss()
                     }
                 }
@@ -95,6 +74,8 @@ struct EntryDetailView: View {
                             let success = await viewModel.toggleFavorite(entryId: entry.entryId, currentStatus: entry.isFavorite)
                             if success {
                                 entry.isFavorite.toggle()
+                                onEntryChanged?()
+
                             }
                         }
                     }) {
@@ -120,6 +101,7 @@ struct EntryDetailView: View {
                     Task {
                         let success = await viewModel.deleteEntry(entry.entryId)
                         if success {
+                            onEntryChanged?()
                             dismiss()
                         }
                     }

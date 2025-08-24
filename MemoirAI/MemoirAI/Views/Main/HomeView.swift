@@ -57,7 +57,11 @@ struct HomeView: View {
                 await viewModel.loadEntries()
             }
             .sheet(item: $viewModel.selectedEntry) { entry in
-                EntryDetailView(entry: entry)
+                EntryDetailView(entry: entry) {
+                    Task {
+                        await viewModel.loadEntries()
+                    }
+                }
             }
             .onChange(of: selectedEntryId) { entryId in
                 // When a specific entry is selected, refresh data and show it
